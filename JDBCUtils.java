@@ -2,9 +2,9 @@ import java.sql.*;
 
 public class JDBCUtils {
 	static final String JDBC_DRIVER = "org.postgresql.Driver";
-	static final String DB_URL = "jdbc:postgresql://localhost:5432/postgres?allowMultiQueries=true";
-	static final String USER = "postgres";
-	static final String PASS = "xuhengxun";
+	static final String DB_URL = "jdbc:postgresql://localhost:5432/m_19_2503308x?allowMultiQueries=true";
+	static final String USER = "m_19_2503308X";
+	static final String PASS = "2503308X";
 	
 	public static Connection getConnection() {
 		try {
