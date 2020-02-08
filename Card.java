@@ -21,7 +21,7 @@ public class Card {
  *  This method prints the table of all the cards
  */
 	
-	public String toString() {
+	public String toString() {  //Test to print card table
 		String cardDetals = String.format("%-15s %2d   %2d   %2d   %2d   %2d",
 				Description,Size,Speed,Range,Firepower,Cargo);
 		return cardDetals;

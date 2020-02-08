@@ -57,13 +57,13 @@ public class Load {
  *      A toString Method in Card class need to be uncommented
  */
 		
-		if(card.size()>0) {
-			for(int i=0;i<card.size();i++) {
-				System.err.println(card.get(i));
-			}
-		} else {
-			System.err.println("No cards detected");
-		}
+//		if(card.size()>0) {
+//			for(int i=0;i<card.size();i++) {
+//				System.err.println(card.get(i));
+//			}
+//		} else {
+//			System.err.println("No cards detected");
+//		}
 		
 		
 	}

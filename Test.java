@@ -53,5 +53,13 @@ public class Test {
 		
 //		End of print Player Decks
 	}
+	
+	public static void checkShuffle() {
+		if(Load.card.size()>0) {  //Test if the deck is successfully shuffled
+			for(int i=0;i<Load.card.size();i++) {
+				System.out.println(Load.card.get(i));
+			}
+		}
+	}
 
 }

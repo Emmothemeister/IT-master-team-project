@@ -6,8 +6,22 @@ public class Game {
 	private static int nRound = 1;
 	private static ArrayList<Integer> maxList = new ArrayList<>();
 	private static Object Max;
-//	private static int MaxCardValue;
 	private static int attribute;
+	private static Card MaxCard;
+	
+//	private static int nPlayers;                   //trail for editing player number
+//	private static ArrayList<ArrayList<Card>> Player;
+	
+//	public static void createPlayers(int n) {
+//		for(int i = 0; i < n; i++) {
+//			Player.add(new ArrayList<Card>());
+//		}
+//		for(int i = 0; i < Load.card.size(); i++) {
+//			for(int j = 0; j < n ; j++) {
+//				Player.get(j).add(Load.card.get(0));
+//			}
+//		}
+//	}
 	
     public static void Title() {
 		System.out.println("--------------------");
@@ -27,18 +41,15 @@ public class Game {
 		if (selection == 1) {
 //			Print Game Statistics
 		} else if (selection == 2) {
-			Game.Loading();
+//			System.out.print("Choose Number of Players [2-5]");
+//			Scanner s2 = new Scanner(System.in);
+//			nPlayers = s2.nextInt();
+//			Loading();
+//			createPlayers(nPlayers);
+			new Load();              //Load cards
 		}
-//		s1.close();
 	}
 	
-	public static void Loading() {
-		new Load();              //Load cards
-		Deck.shuffleCards();
-		Deck.deal();
-		Test.PlayerDecks();      //Uncomment for testing
-    }
-		
 /*
  *      Put first card of every player into comparing pile
  */
@@ -59,122 +70,228 @@ public class Game {
 		System.out.println("\n\nGame Start\nRound " + nRound + 
 				"\nRound " + nRound + ": Players have drawn their cards");
 
-		System.out.println(Deck.ComparingPile.get(0));  //print detail of this card
+		System.out.println(Deck.ComparingPile.get(0));  //print detail of your first card
 		System.out.println("There are [" + Deck.Player1.size() + "] cards in your deck");
 		System.out.println("It is your turn to select a category, the categories are:");
 		System.out.println("   1: Size\n   2: Speed\n   "
 				+ "3: Range\n   4: Firepower\n   5: Cargo");
-		
 		System.out.print("Enter the number for your attribute: ");
 	}
+	
 	public static void selectAttribute() {
 		Scanner a = new Scanner(System.in);
 		attribute = a.nextInt();
 		
 		if(attribute == 1) {
-			for(int i = 0; i < 5; i++) {
-				Deck.Comparing.add(Deck.ComparingPile.get(i).getSize());
+			for(int i = 0; i < 5; i++) {  //i < 5, 5 is number of players
+				Deck.CompValue.add(Deck.ComparingPile.get(i).getSize());
 			}
-//			Deck.Comparing.add(Deck.ComparingPile.get(0).getSize());
-//			Deck.Comparing.add(Deck.ComparingPile.get(1).getSize());
-//			Deck.Comparing.add(Deck.ComparingPile.get(2).getSize());
-//			Deck.Comparing.add(Deck.ComparingPile.get(3).getSize());
-//			Deck.Comparing.add(Deck.ComparingPile.get(4).getSize());
 			
-//			MaxCardValue = Collections.max(Deck.Comparing);
-//			System.out.println(MaxCardValue);
-			
-			Max = Collections.max(Deck.Comparing);
-			System.out.println("Max value is: " + Max.toString()); //For test
-			for(int i = 0; i < Deck.Comparing.size(); i++) {
-				if(Deck.Comparing.get(i) == Max) {
-					System.out.println("Player" + (i+1));
-					maxList.add(i);
+			Max = Collections.max(Deck.CompValue); // Max is an Integer Object
+			System.err.println("Max value is: " + Max.toString()); //For test
+			for(int j = 0; j < Deck.CompValue.size(); j++) { //CompValue.size() is number of Players
+				if(Deck.CompValue.get(j) == Max) {
+					System.err.println("Player" + (j+1));
+					maxList.add(j);
 				}
 			}
-//			//备选方案（只能print第一个找到的值）
-//			System.out.println("Player" + (Deck.Comparing.indexOf(Max)+1)); 
 //			//Deck.Comparing.indexOf(Max) is an int
-//			Deck.ComparingPile.get(PlayerIndex+1).getDescription();
+
 		}else if(attribute == 2) {
-			Deck.Comparing.add(Deck.ComparingPile.get(0).getSpeed());
-			Deck.Comparing.add(Deck.ComparingPile.get(1).getSpeed());
-			Deck.Comparing.add(Deck.ComparingPile.get(2).getSpeed());
-			Deck.Comparing.add(Deck.ComparingPile.get(3).getSpeed());
-			Deck.Comparing.add(Deck.ComparingPile.get(4).getSpeed());
+			for(int i = 0; i < 5; i++) {
+				Deck.CompValue.add(Deck.ComparingPile.get(i).getSpeed());
+			}
+			Max = Collections.max(Deck.CompValue);
+			System.err.println("Max value is: " + Max.toString()); //For test
+			for(int j = 0; j < Deck.CompValue.size(); j++) {
+				if(Deck.CompValue.get(j) == Max) {
+					System.err.println("Player" + (j+1));
+					maxList.add(j);
+				}
+			}
 			
-//			MaxCardValue = Collections.max(Deck.Comparing);
-//			System.out.println(MaxCardValue);
 		}else if(attribute == 3) {
-			Deck.Comparing.add(Deck.ComparingPile.get(0).getRange());
-			Deck.Comparing.add(Deck.ComparingPile.get(1).getRange());
-			Deck.Comparing.add(Deck.ComparingPile.get(2).getRange());
-			Deck.Comparing.add(Deck.ComparingPile.get(3).getRange());
-			Deck.Comparing.add(Deck.ComparingPile.get(4).getRange());
+			for(int i = 0; i < 5; i++) {
+				Deck.CompValue.add(Deck.ComparingPile.get(i).getRange());
+			}
+			Max = Collections.max(Deck.CompValue);
+			System.err.println("Max value is: " + Max.toString()); //For test
+			for(int j = 0; j < Deck.CompValue.size(); j++) {
+				if(Deck.CompValue.get(j) == Max) {
+					System.err.println("Player" + (j+1));
+					maxList.add(j);
+				}
+			}
 			
-//			MaxCardValue = Collections.max(Deck.Comparing);
-//			System.out.println(MaxCardValue);
 		}else if(attribute == 4) {
-			Deck.Comparing.add(Deck.ComparingPile.get(0).getFirepower());
-			Deck.Comparing.add(Deck.ComparingPile.get(1).getFirepower());
-			Deck.Comparing.add(Deck.ComparingPile.get(2).getFirepower());
-			Deck.Comparing.add(Deck.ComparingPile.get(3).getFirepower());
-			Deck.Comparing.add(Deck.ComparingPile.get(4).getFirepower());
+			for(int i = 0; i < 5; i++) {
+				Deck.CompValue.add(Deck.ComparingPile.get(i).getFirepower());
+			}
+			Max = Collections.max(Deck.CompValue);
+			System.err.println("Max value is: " + Max.toString()); //For test
+			for(int j = 0; j < Deck.CompValue.size(); j++) {
+				if(Deck.CompValue.get(j) == Max) {
+					System.err.println("Player" + (j+1));
+					maxList.add(j);
+				}
+			}
 			
-//			MaxCardValue = Collections.max(Deck.Comparing);
-//			System.out.println(MaxCardValue);
 		}else if(attribute == 5) {
-			Deck.Comparing.add(Deck.ComparingPile.get(0).getCargo());
-			Deck.Comparing.add(Deck.ComparingPile.get(1).getCargo());
-			Deck.Comparing.add(Deck.ComparingPile.get(2).getCargo());
-			Deck.Comparing.add(Deck.ComparingPile.get(3).getCargo());
-			Deck.Comparing.add(Deck.ComparingPile.get(4).getCargo());
-			
-//			MaxCardValue = Collections.max(Deck.Comparing);
-//			System.out.println(MaxCardValue);
-		}
-		
-		if(maxList.size() > 1) {
-			System.out.println("Round " + nRound + ": This round was a Draw, "
-					+ "common pile now has " + Deck.Comparing.size() 
-					+ " cards\nThe winning card was [" 
-					+ Deck.ComparingPile.get(Deck.Comparing.indexOf(Max)).getDescription() 
-					+ "]:");
-			if(attribute == 1) {
-				System.out.println("   > Size:       " 
-			+ Deck.ComparingPile.get(Deck.Comparing.indexOf(Max)).getSize() + " <--");
-				System.out.println("   > Speed:      " 
-			+ Deck.ComparingPile.get(Deck.Comparing.indexOf(Max)).getSpeed());
-				System.out.println("   > Range:      " 
-			+ Deck.ComparingPile.get(Deck.Comparing.indexOf(Max)).getRange());
-				System.out.println("   > Firepower:  " 
-			+ Deck.ComparingPile.get(Deck.Comparing.indexOf(Max)).getFirepower());
-				System.out.println("   > Cargo:      " 
-			+ Deck.ComparingPile.get(Deck.Comparing.indexOf(Max)).getCargo());
+			for(int i = 0; i < 5; i++) {
+				Deck.CompValue.add(Deck.ComparingPile.get(i).getCargo());
+			}
+			Max = Collections.max(Deck.CompValue);
+			System.err.println("Max value is: " + Max.toString()); //For test
+			for(int j = 0; j < Deck.CompValue.size(); j++) {
+				if(Deck.CompValue.get(j) == Max) {
+					System.err.println("Player" + (j+1));
+					maxList.add(j);
+				}
 			}
 		}
-		
-//		a.close();
-		
-//		Deck.ComparingPile.get(0).getSize(); //int
-		
-		
-		
-		
-//		if(PlayerIndex == -1) {
-//			System.out.println("Player1");
-//		}else if(PlayerIndex == 0) {
-//			System.out.println("Player2");
-//		}else if(PlayerIndex == 1) {
-//			System.out.println("Player3");
-//		}else if(PlayerIndex == 2) {
-//			System.out.println("Player4");
-//		}else if(PlayerIndex == 3) {
-//			System.out.println("Player5");
-//		}
-		//瑕疵：同样的两张卡，只有第一张出现
-		//永远== -1 出错
-		//最大值找到，但玩家出错
-//		System.out.println(Deck.ComparingPile.indexOf(Collections.max(Deck.Comparing)));
 	}
+	
+	public static void addToCommonPile() {
+		for (int i = 0; i < Deck.ComparingPile.size(); i++) {
+			Deck.CommonPile.add(Deck.ComparingPile.get(i));
+		}
+	}
+	
+	public static void roundResult() {
+		addToCommonPile(); //add to common pile
+		if(maxList.size() > 1) { //it's a draw			
+			System.out.println("Round " + nRound + ": This round was a Draw, "
+					+ "common pile now has [" + Deck.CommonPile.size() 
+					+ "] cards\nThe winning card was [" 
+					+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription() 
+					+ "]:");
+			
+			//print common pile for test
+			System.out.println("<TEST> Common Pile:");
+			for (int i = 0; i < Deck.CommonPile.size(); i++) {
+				System.err.println(Deck.CommonPile.get(i));
+			}
+			System.out.println("The winning card was [" 
+					+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription()
+					+ "]:");
+			printResult();
+			
+		} else {
+			if(Deck.CompValue.indexOf(Max) == 0) {
+//				Player1 You
+				System.out.println("Round " + nRound + ": Player You won this round");
+				System.out.println("The winning card was [" 
+						+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription()
+						+ "]:");
+				printResult();
+				for(int i = 0; i < Deck.CommonPile.size(); i++) {
+					Deck.Player1.add(Deck.CommonPile.get(i));
+				}
+				Deck.CommonPile.clear();
+			}else if(Deck.CompValue.indexOf(Max) == 1) {
+				System.out.println("Round " + nRound + ": Player 2 won this round");
+				System.out.println("The winning card was [" 
+						+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription()
+						+ "]:");
+				printResult();
+				for(int i = 0; i < Deck.CommonPile.size(); i++) {
+					Deck.Player2.add(Deck.CommonPile.get(i));				
+				}
+				Deck.CommonPile.clear();
+			}else if(Deck.CompValue.indexOf(Max) == 2) {
+				System.out.println("Round " + nRound + ": Player 3 won this round");
+				System.out.println("The winning card was [" 
+						+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription()
+						+ "]:");
+				printResult();
+				for(int i = 0; i < Deck.CommonPile.size(); i++) {
+					Deck.Player3.add(Deck.CommonPile.get(i));					
+				}
+				Deck.CommonPile.clear();
+			}else if(Deck.CompValue.indexOf(Max) == 3) {
+				System.out.println("Round " + nRound + ": Player 4 won this round");
+				System.out.println("The winning card was [" 
+						+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription()
+						+ "]:");
+				printResult();
+				for(int i = 0; i < Deck.CommonPile.size(); i++) {
+					Deck.Player4.add(Deck.CommonPile.get(i));					
+				}
+				Deck.CommonPile.clear();
+			}else if(Deck.CompValue.indexOf(Max) == 4) {
+				System.out.println("Round " + nRound + ": Player 5 won this round");
+				System.out.println("The winning card was [" 
+						+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription()
+						+ "]:");
+				printResult();
+				for(int i = 0; i < Deck.CommonPile.size(); i++) {
+					Deck.Player5.add(Deck.CommonPile.get(i));				
+				}
+				Deck.CommonPile.clear();
+			}
+		}
+		Deck.CompValue.clear();
+		maxList.clear();
+		nRound++;
+	}
+		
+	public static void printResult() {
+		if(attribute == 1) {
+			System.out.println("   > Size:       " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSize() + " <--");
+			System.out.println("   > Speed:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSpeed());
+			System.out.println("   > Range:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getRange());
+			System.out.println("   > Firepower:  " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getFirepower());
+			System.out.println("   > Cargo:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getCargo());
+		} else if (attribute == 2) {
+			System.out.println("   > Size:       " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSize());
+			System.out.println("   > Speed:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSpeed() + " <--");
+			System.out.println("   > Range:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getRange());
+			System.out.println("   > Firepower:  " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getFirepower());
+			System.out.println("   > Cargo:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getCargo());
+		} else if (attribute == 3) {
+			System.out.println("   > Size:       " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSize());
+			System.out.println("   > Speed:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSpeed());
+			System.out.println("   > Range:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getRange() + " <--");
+			System.out.println("   > Firepower:  " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getFirepower());
+			System.out.println("   > Cargo:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getCargo());
+		} else if (attribute == 4) {
+			System.out.println("   > Size:       " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSize());
+			System.out.println("   > Speed:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSpeed());
+			System.out.println("   > Range:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getRange());
+			System.out.println("   > Firepower:  " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getFirepower() + " <--");
+			System.out.println("   > Cargo:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getCargo());
+		} else if (attribute == 5) {
+			System.out.println("   > Size:       " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSize());
+			System.out.println("   > Speed:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSpeed());
+			System.out.println("   > Range:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getRange());
+			System.out.println("   > Firepower:  " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getFirepower());
+			System.out.println("   > Cargo:      " 
+		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getCargo() + " <--");
+		}
+		Deck.ComparingPile.clear();
+	}	
 }
