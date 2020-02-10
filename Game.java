@@ -3,295 +3,308 @@ import java.util.Collections;
 import java.util.Scanner;
 
 public class Game {
-	private static int nRound = 1;
-	private static ArrayList<Integer> maxList = new ArrayList<>();
-	private static Object Max;
-	private static int attribute;
-	private static Card MaxCard;
+	private int nRound = 1;
+	private ArrayList<Integer> maxList = new ArrayList<>();
+	private Object Max;
+	private int attribute;
 	
-//	private static int nPlayers;                   //trail for editing player number
-//	private static ArrayList<ArrayList<Card>> Player;
+	private int selection;
+	private int nPlayers;
+	private ArrayList<ArrayList<Card>> Player = new ArrayList<>();
 	
-//	public static void createPlayers(int n) {
-//		for(int i = 0; i < n; i++) {
-//			Player.add(new ArrayList<Card>());
-//		}
-//		for(int i = 0; i < Load.card.size(); i++) {
-//			for(int j = 0; j < n ; j++) {
-//				Player.get(j).add(Load.card.get(0));
-//			}
-//		}
-//	}
+	private ArrayList<Card> ComparingPile = new ArrayList<>();
+	private ArrayList<Integer> CompValue = new ArrayList<>();
+	private ArrayList<Card> CommonPile = new ArrayList<>();	
 	
-    public static void Title() {
-		System.out.println("--------------------");
-		System.out.println("--- Top Trumps   ---");
-		System.out.println("--------------------");
+	
+	public Game() {
+		newGame();
 	}
 	
-	public static void Start() {
+	public void newGame() {
+		start();
+		shuffleCards();
+		createPlayer();
+		deal();
+		TestPlayerDecks();  //Test
+		draw();
+		roundDetail();
+		selectAttribute();
+		roundResult();
+		checkGameEnd();
+	}
+	
+	public void newRound() {
+		draw();
+		roundDetail();
+		selectAttribute();
+		roundResult();
+		checkGameEnd();
+	}
+	
+	public void start() {
 		System.out.println("Do you want to see past results or play a game?");
 		System.out.println("   1: Print Game Statistics");
 		System.out.println("   2: Play game");
 		System.out.print("Enter the number for your selection: ");
 		
-		Scanner s1 = new Scanner(System.in);
-		int selection = s1.nextInt();
-		
+		Scanner s = new Scanner(System.in);
+		selection = s.nextInt();
+		select();
+	}
+	
+	public void select() {
 		if (selection == 1) {
 //			Print Game Statistics
+			start();                            //After printing statistics, start again
 		} else if (selection == 2) {
-//			System.out.print("Choose Number of Players [2-5]");
-//			Scanner s2 = new Scanner(System.in);
-//			nPlayers = s2.nextInt();
-//			Loading();
-//			createPlayers(nPlayers);
-			new Load();              //Load cards
+			new Deck();
+			new Load();                         //Load cards
+		}
+	}
+	
+	public void shuffleCards() {
+		Collections.shuffle(Deck.getDeck());
+		checkShuffle();
+	}
+	
+	public void createPlayer() {
+		System.out.print("Choose Number of Players: (No more than " + Deck.getDeck().size() + " players)");
+		Scanner s2 = new Scanner(System.in);
+		nPlayers = s2.nextInt();
+		for(int i = 0; i < nPlayers; i++) {
+			Player.add(new ArrayList<Card>());
+		}
+	}
+	
+	public void deal() {
+		int i = 0;
+		while(i < Player.size() && Deck.getDeck().size() > 0) {
+			Player.get(i).add(Deck.getDeck().get(0));
+			Deck.getDeck().remove(0);
+			
+			if(i != (Player.size()-1)) {
+				i++;
+			} else {
+				i = 0;
+			}
 		}
 	}
 	
 /*
- *      Put first card of every player into comparing pile
+ *  Put first card of every player into comparing pile
  */
-	public static void draw() {  //draw the first card and put them into ComparingPile
-		Deck.ComparingPile.add(Deck.Player1.get(0));
-		Deck.Player1.remove(0);
-		Deck.ComparingPile.add(Deck.Player2.get(0));
-		Deck.Player2.remove(0);
-		Deck.ComparingPile.add(Deck.Player3.get(0));
-		Deck.Player3.remove(0);
-		Deck.ComparingPile.add(Deck.Player4.get(0));
-		Deck.Player4.remove(0);
-		Deck.ComparingPile.add(Deck.Player5.get(0));
-		Deck.Player5.remove(0);
+	public void draw() {	
+		
+		for(int i = 0; i < Player.size(); i++) {
+			ComparingPile.add(Player.get(i).get(0));
+			Player.get(i).remove(0);
+		}
 	}
-	
-	public static void roundDetail() {  //show the detail of the card you drew
+/*
+ *  Show the detail of the card you drew
+ */	
+	public void roundDetail() {
 		System.out.println("\n\nGame Start\nRound " + nRound + 
 				"\nRound " + nRound + ": Players have drawn their cards");
 
-		System.out.println(Deck.ComparingPile.get(0));  //print detail of your first card
-		System.out.println("There are [" + Deck.Player1.size() + "] cards in your deck");
+		System.out.println(ComparingPile.get(0));  //print detail of your first card
+		System.out.println("There are [" + Player.get(0).size() + "] cards in your deck");
 		System.out.println("It is your turn to select a category, the categories are:");
-		System.out.println("   1: Size\n   2: Speed\n   "
-				+ "3: Range\n   4: Firepower\n   5: Cargo");
+		System.out.println("   1: Size\n   2: Speed\n   3: Range\n   4: Firepower\n   5: Cargo");
 		System.out.print("Enter the number for your attribute: ");
 	}
 	
-	public static void selectAttribute() {
+	public void takeMax() {
+		Max = Collections.max(CompValue);                         // Max is an Integer Object
+		System.err.println("Max value is: " + Max.toString());    //For test
+		for(int i = 0; i < CompValue.size(); i++) {               //CompValue.size() is number of Players
+			if(CompValue.get(i) == Max) {
+				maxList.add(i);
+				System.err.println("Player" + (i+1));             //For test
+			}
+		}
+	}
+	
+	public void selectAttribute() {
 		Scanner a = new Scanner(System.in);
 		attribute = a.nextInt();
 		
 		if(attribute == 1) {
-			for(int i = 0; i < 5; i++) {  //i < 5, 5 is number of players
-				Deck.CompValue.add(Deck.ComparingPile.get(i).getSize());
+			for(int i = 0; i < Player.size(); i++) {
+				CompValue.add(ComparingPile.get(i).getSize());
 			}
-			
-			Max = Collections.max(Deck.CompValue); // Max is an Integer Object
-			System.err.println("Max value is: " + Max.toString()); //For test
-			for(int j = 0; j < Deck.CompValue.size(); j++) { //CompValue.size() is number of Players
-				if(Deck.CompValue.get(j) == Max) {
-					System.err.println("Player" + (j+1));
-					maxList.add(j);
-				}
-			}
-//			//Deck.Comparing.indexOf(Max) is an int
-
 		}else if(attribute == 2) {
-			for(int i = 0; i < 5; i++) {
-				Deck.CompValue.add(Deck.ComparingPile.get(i).getSpeed());
-			}
-			Max = Collections.max(Deck.CompValue);
-			System.err.println("Max value is: " + Max.toString()); //For test
-			for(int j = 0; j < Deck.CompValue.size(); j++) {
-				if(Deck.CompValue.get(j) == Max) {
-					System.err.println("Player" + (j+1));
-					maxList.add(j);
-				}
-			}
-			
+			for(int i = 0; i < Player.size(); i++) {
+				CompValue.add(ComparingPile.get(i).getSpeed());
+			}			
 		}else if(attribute == 3) {
-			for(int i = 0; i < 5; i++) {
-				Deck.CompValue.add(Deck.ComparingPile.get(i).getRange());
-			}
-			Max = Collections.max(Deck.CompValue);
-			System.err.println("Max value is: " + Max.toString()); //For test
-			for(int j = 0; j < Deck.CompValue.size(); j++) {
-				if(Deck.CompValue.get(j) == Max) {
-					System.err.println("Player" + (j+1));
-					maxList.add(j);
-				}
-			}
-			
+			for(int i = 0; i < Player.size(); i++) {
+				CompValue.add(ComparingPile.get(i).getRange());
+			}			
 		}else if(attribute == 4) {
-			for(int i = 0; i < 5; i++) {
-				Deck.CompValue.add(Deck.ComparingPile.get(i).getFirepower());
-			}
-			Max = Collections.max(Deck.CompValue);
-			System.err.println("Max value is: " + Max.toString()); //For test
-			for(int j = 0; j < Deck.CompValue.size(); j++) {
-				if(Deck.CompValue.get(j) == Max) {
-					System.err.println("Player" + (j+1));
-					maxList.add(j);
-				}
-			}
-			
+			for(int i = 0; i < Player.size(); i++) {
+				CompValue.add(ComparingPile.get(i).getFirepower());
+			}			
 		}else if(attribute == 5) {
-			for(int i = 0; i < 5; i++) {
-				Deck.CompValue.add(Deck.ComparingPile.get(i).getCargo());
+			for(int i = 0; i < Player.size(); i++) {
+				CompValue.add(ComparingPile.get(i).getCargo());
 			}
-			Max = Collections.max(Deck.CompValue);
-			System.err.println("Max value is: " + Max.toString()); //For test
-			for(int j = 0; j < Deck.CompValue.size(); j++) {
-				if(Deck.CompValue.get(j) == Max) {
-					System.err.println("Player" + (j+1));
-					maxList.add(j);
-				}
-			}
+		}
+		takeMax();
+	}
+	
+	public void addToCommonPile() {
+		for (int i = 0; i < ComparingPile.size(); i++) {
+			CommonPile.add(ComparingPile.get(i));
 		}
 	}
 	
-	public static void addToCommonPile() {
-		for (int i = 0; i < Deck.ComparingPile.size(); i++) {
-			Deck.CommonPile.add(Deck.ComparingPile.get(i));
-		}
-	}
-	
-	public static void roundResult() {
-		addToCommonPile(); //add to common pile
-		if(maxList.size() > 1) { //it's a draw			
+	public void roundResult() {
+		addToCommonPile();                  //add to common pile
+		if(maxList.size() > 1) {            //it's a draw			
 			System.out.println("Round " + nRound + ": This round was a Draw, "
-					+ "common pile now has [" + Deck.CommonPile.size() 
+					+ "common pile now has [" + CommonPile.size() 
 					+ "] cards\nThe winning card was [" 
-					+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription() 
+					+ ComparingPile.get(CompValue.indexOf(Max)).getDescription() 
 					+ "]:");
 			
 			//print common pile for test
 			System.out.println("<TEST> Common Pile:");
-			for (int i = 0; i < Deck.CommonPile.size(); i++) {
-				System.err.println(Deck.CommonPile.get(i));
+			for (int i = 0; i < CommonPile.size(); i++) {
+				System.err.println(CommonPile.get(i));
 			}
 			System.out.println("The winning card was [" 
-					+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription()
+					+ ComparingPile.get(CompValue.indexOf(Max)).getDescription()
 					+ "]:");
 			printResult();
 			
-		} else {
-			if(Deck.CompValue.indexOf(Max) == 0) {
-//				Player1 You
-				System.out.println("Round " + nRound + ": Player You won this round");
-				System.out.println("The winning card was [" 
-						+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription()
-						+ "]:");
-				printResult();
-				for(int i = 0; i < Deck.CommonPile.size(); i++) {
-					Deck.Player1.add(Deck.CommonPile.get(i));
-				}
-				Deck.CommonPile.clear();
-			}else if(Deck.CompValue.indexOf(Max) == 1) {
-				System.out.println("Round " + nRound + ": Player 2 won this round");
-				System.out.println("The winning card was [" 
-						+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription()
-						+ "]:");
-				printResult();
-				for(int i = 0; i < Deck.CommonPile.size(); i++) {
-					Deck.Player2.add(Deck.CommonPile.get(i));				
-				}
-				Deck.CommonPile.clear();
-			}else if(Deck.CompValue.indexOf(Max) == 2) {
-				System.out.println("Round " + nRound + ": Player 3 won this round");
-				System.out.println("The winning card was [" 
-						+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription()
-						+ "]:");
-				printResult();
-				for(int i = 0; i < Deck.CommonPile.size(); i++) {
-					Deck.Player3.add(Deck.CommonPile.get(i));					
-				}
-				Deck.CommonPile.clear();
-			}else if(Deck.CompValue.indexOf(Max) == 3) {
-				System.out.println("Round " + nRound + ": Player 4 won this round");
-				System.out.println("The winning card was [" 
-						+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription()
-						+ "]:");
-				printResult();
-				for(int i = 0; i < Deck.CommonPile.size(); i++) {
-					Deck.Player4.add(Deck.CommonPile.get(i));					
-				}
-				Deck.CommonPile.clear();
-			}else if(Deck.CompValue.indexOf(Max) == 4) {
-				System.out.println("Round " + nRound + ": Player 5 won this round");
-				System.out.println("The winning card was [" 
-						+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getDescription()
-						+ "]:");
-				printResult();
-				for(int i = 0; i < Deck.CommonPile.size(); i++) {
-					Deck.Player5.add(Deck.CommonPile.get(i));				
-				}
-				Deck.CommonPile.clear();
+		} else {  // not a draw
+			int playerIndex = CompValue.indexOf(Max);
+			System.out.println("Round " + nRound + ": Player" + playerIndex + " won this round");
+			System.out.println("The winning card was [" 
+					+ ComparingPile.get(playerIndex).getDescription()
+					+ "]:");
+			printResult();
+			for(int i = 0; i < CommonPile.size(); i++) {
+				Player.get(playerIndex).add(CommonPile.get(i));
 			}
+			CommonPile.clear();
 		}
-		Deck.CompValue.clear();
+		CompValue.clear();
 		maxList.clear();
+		removePlayer();
 		nRound++;
 	}
+	public void removePlayer() {
+		for(int i = 0; i < Player.size(); i++) {
+			if(Player.get(i).size() == 0) {
+				Player.remove(i);
+			}
+		}
+	}
+	
+	public void checkGameEnd() {
+		if(Player.size() == 1) {
+//			Game End
+			System.out.println("\n\nGame End\n");
+			gameResult();
+			newGame();
+		}else {
+			newRound();
+		}
+	}
+	
+	public void gameResult() {
+		System.out.println("The overall winner was ");
+		System.out.println("Scores:");
+		System.out.println("   You :");
+		System.out.println("   AI Player 1:");
+		System.out.println("   AI Player 2:");
+		System.out.println("   AI Player 3:");
+		System.out.println("   AI Player 4:");
+	}
 		
-	public static void printResult() {
+	public void printResult() {
 		if(attribute == 1) {
 			System.out.println("   > Size:       " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSize() + " <--");
+		+ ComparingPile.get(CompValue.indexOf(Max)).getSize() + " <--");
 			System.out.println("   > Speed:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSpeed());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getSpeed());
 			System.out.println("   > Range:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getRange());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getRange());
 			System.out.println("   > Firepower:  " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getFirepower());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getFirepower());
 			System.out.println("   > Cargo:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getCargo());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getCargo());
 		} else if (attribute == 2) {
 			System.out.println("   > Size:       " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSize());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getSize());
 			System.out.println("   > Speed:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSpeed() + " <--");
+		+ ComparingPile.get(CompValue.indexOf(Max)).getSpeed() + " <--");
 			System.out.println("   > Range:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getRange());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getRange());
 			System.out.println("   > Firepower:  " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getFirepower());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getFirepower());
 			System.out.println("   > Cargo:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getCargo());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getCargo());
 		} else if (attribute == 3) {
 			System.out.println("   > Size:       " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSize());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getSize());
 			System.out.println("   > Speed:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSpeed());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getSpeed());
 			System.out.println("   > Range:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getRange() + " <--");
+		+ ComparingPile.get(CompValue.indexOf(Max)).getRange() + " <--");
 			System.out.println("   > Firepower:  " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getFirepower());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getFirepower());
 			System.out.println("   > Cargo:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getCargo());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getCargo());
 		} else if (attribute == 4) {
 			System.out.println("   > Size:       " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSize());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getSize());
 			System.out.println("   > Speed:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSpeed());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getSpeed());
 			System.out.println("   > Range:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getRange());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getRange());
 			System.out.println("   > Firepower:  " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getFirepower() + " <--");
+		+ ComparingPile.get(CompValue.indexOf(Max)).getFirepower() + " <--");
 			System.out.println("   > Cargo:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getCargo());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getCargo());
 		} else if (attribute == 5) {
 			System.out.println("   > Size:       " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSize());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getSize());
 			System.out.println("   > Speed:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getSpeed());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getSpeed());
 			System.out.println("   > Range:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getRange());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getRange());
 			System.out.println("   > Firepower:  " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getFirepower());
+		+ ComparingPile.get(CompValue.indexOf(Max)).getFirepower());
 			System.out.println("   > Cargo:      " 
-		+ Deck.ComparingPile.get(Deck.CompValue.indexOf(Max)).getCargo() + " <--");
+		+ ComparingPile.get(CompValue.indexOf(Max)).getCargo() + " <--");
 		}
-		Deck.ComparingPile.clear();
-	}	
+		ComparingPile.clear();
+		TestPlayerDecks();          //For test
+	}
+	
+	//Tests:
+	
+	public void TestPlayerDecks() { //For test
+		System.err.println("=======================================");
+		for(int i = 0; i < Player.size(); i++) {
+			System.err.println("Player" + (i+1) + " Deck:");
+			for(int j=0; j < Player.get(i).size();j++) {
+				System.err.println(Player.get(i).get(j));//Test if the deck is successfully shuffled
+			}
+			System.err.println("=======================================");
+		}
+		System.err.println("Original deck now has [" + Deck.getDeck().size() + "] card left");
+	}
+	
+	public void checkShuffle() {
+		if(Deck.getDeck().size()>0) {  //Test if the deck is successfully shuffled
+			for(int i=0;i<Deck.getDeck().size();i++) {
+				System.out.println(Deck.getDeck().get(i));
+			}
+		}
+	}
 }
