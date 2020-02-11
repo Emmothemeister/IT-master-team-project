@@ -2,10 +2,11 @@ import java.sql.*;
 
 public class JDBCUtils {
 	static final String JDBC_DRIVER = "org.postgresql.Driver";
-	static final String DB_URL = "jdbc:postgresql://localhost:5432/m_19_2503308x?allowMultiQueries=true";
+	static final String DB_URL = "jdbc:postgresql://yacata.dcs.gla.ac.uk:5432/m_19_2503308x?allowMultiQueries=true";
 	static final String USER = "m_19_2503308X";
 	static final String PASS = "2503308X";
 	
+	// Connect to database
 	public static Connection getConnection() {
 		try {
 			Class.forName(JDBC_DRIVER);
@@ -21,11 +22,35 @@ public class JDBCUtils {
 		return null;
 	}
 	
-	public static void updateTtps() {
+	// clear all rounds' information once a game has completed
+	public static void resetRounds() {
+		Connection conn = JDBCUtils.getConnection();
+		Statement stmt = null;
+		
+		try {
+			conn.setAutoCommit(false);
+			System.out.println("clear all data from toptrumps");
+			String sql = "truncate table toptrumps";
+			stmt = conn.createStatement();
+			int result = stmt.executeUpdate(sql);
+			System.out.println(result);
+			conn.commit( );
+		}catch(SQLException se) {
+			System.out.println("Could not delete data");
+			se.printStackTrace();
+		}finally {
+			JDBCUtils.closeStmt(stmt);
+			JDBCUtils.closeConn(conn);
+		}
+	}
+	
+	// Record information once a round has completed
+	public static void updateRounds() {
 		Connection conn = JDBCUtils.getConnection();
 		PreparedStatement pstmt = null;
 		
 		try {
+			conn.setAutoCommit(false);
 			System.out.println("Storing data into toptrumps");
 			String sql = "insert into toptrumps(winner,draw) values(?,?)";
 			pstmt = conn.prepareStatement(sql);
@@ -34,6 +59,8 @@ public class JDBCUtils {
 				pstmt.setString(2, "false");
 			}
 			int result = pstmt.executeUpdate();
+			System.out.println(result);
+			conn.commit( );
 		}catch(SQLException se) {
 			System.out.println("Could not store data");
 			se.printStackTrace();
@@ -43,11 +70,13 @@ public class JDBCUtils {
 		}
 	}
 	
-	public static void updateGrcd() {
+	// Record information once a game has completed
+	public static void updateGames() {
 		Connection conn = JDBCUtils.getConnection();
 		PreparedStatement pstmt = null;
 		
 		try {
+			conn.setAutoCommit(false);
 			System.out.println("Storing data into game record");
 			String sql = "insert into gamerecord(wog,nod, nor) values(?,?,?)";
 			pstmt = conn.prepareStatement(sql);
@@ -57,6 +86,8 @@ public class JDBCUtils {
 				pstmt.setInt(3, 10);
 			}
 			int result = pstmt.executeUpdate();
+			System.out.println(result);
+			conn.commit( );
 		}catch(SQLException se) {
 			System.out.println("Could not store data");
 			se.printStackTrace();
@@ -66,7 +97,8 @@ public class JDBCUtils {
 		}
 	}
 	
-	public static void getRecord() {
+	// Access to database and collect past game records
+	public static void getRecord() throws SQLException {
 		Connection conn = JDBCUtils.getConnection();
 		Statement stmt1 = null;
 		Statement stmt2 = null;
@@ -79,6 +111,7 @@ public class JDBCUtils {
 		ResultSet rs4 = null;
 		ResultSet rs5 = null;
 		try {
+			conn.setAutoCommit(false);
 			System.out.println("Trying to get past game records");
 			String s1 = "select count(*) as Number_of_Games_Completed from gamerecord";
 			String s2 =	"select count(*)as Number_of_Game_Won_by_AI from gamerecord";
@@ -100,9 +133,11 @@ public class JDBCUtils {
 			JDBCUtils.printRs3(rs3);
 			JDBCUtils.printRs4(rs4);
 			JDBCUtils.printRs5(rs5);
+			conn.commit( );
 		} catch(SQLException se) {
 			System.out.println("Could not get result from game record");
 			se.printStackTrace();
+			conn.rollback( );
 		} finally {
 			JDBCUtils.closeRs(rs5);
 			JDBCUtils.closeRs(rs4);
