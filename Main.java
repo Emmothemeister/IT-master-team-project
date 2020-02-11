@@ -1,7 +1,10 @@
 
 public class Main {
 	public static void main(String[] args) {
-		new Title();           //Print game title
+		System.out.println("--------------------");
+		System.out.println("--- Top Trumps   ---");
+		System.out.println("--------------------");
+		
 		new Game();          
 	}
 }

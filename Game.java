@@ -1,8 +1,12 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
+	private int numOfGames = 1;
+	private int longestGame = 0;
+////SQL number of Games	
 	private int nRound = 1;
 	private ArrayList<Integer> maxList = new ArrayList<>();
 	private Object Max;
@@ -10,11 +14,16 @@ public class Game {
 	
 	private int selection;
 	private int nPlayers;
-	private ArrayList<ArrayList<Card>> Player = new ArrayList<>();
+//	private ArrayList<ArrayList<Card>> Player = new ArrayList<>();
+	private ArrayList<Player> playerList = new ArrayList<>();
 	
 	private ArrayList<Card> ComparingPile = new ArrayList<>();
 	private ArrayList<Integer> CompValue = new ArrayList<>();
-	private ArrayList<Card> CommonPile = new ArrayList<>();	
+	private ArrayList<Card> CommonPile = new ArrayList<>();
+	private ArrayList<Integer> AIpicking = new ArrayList<>();
+	
+	private int roundWinnerIndex;
+	private String winner;
 	
 	
 	public Game() {
@@ -26,7 +35,7 @@ public class Game {
 		shuffleCards();
 		createPlayer();
 		deal();
-		TestPlayerDecks();  //Test
+//		TestPlayerDecks();  //Test
 		draw();
 		roundDetail();
 		selectAttribute();
@@ -65,7 +74,7 @@ public class Game {
 	
 	public void shuffleCards() {
 		Collections.shuffle(Deck.getDeck());
-		checkShuffle();
+//		checkShuffle();
 	}
 	
 	public void createPlayer() {
@@ -73,17 +82,17 @@ public class Game {
 		Scanner s2 = new Scanner(System.in);
 		nPlayers = s2.nextInt();
 		for(int i = 0; i < nPlayers; i++) {
-			Player.add(new ArrayList<Card>());
+			playerList.add(new Player(i, new ArrayList<Card>()));
 		}
 	}
 	
 	public void deal() {
 		int i = 0;
-		while(i < Player.size() && Deck.getDeck().size() > 0) {
-			Player.get(i).add(Deck.getDeck().get(0));
+		while(i < playerList.size() && Deck.getDeck().size() > 0) {
+			playerList.get(i).getPlayerDeck().add(Deck.getDeck().get(0));
 			Deck.getDeck().remove(0);
 			
-			if(i != (Player.size()-1)) {
+			if(i != (playerList.size()-1)) {
 				i++;
 			} else {
 				i = 0;
@@ -96,62 +105,108 @@ public class Game {
  */
 	public void draw() {	
 		
-		for(int i = 0; i < Player.size(); i++) {
-			ComparingPile.add(Player.get(i).get(0));
-			Player.get(i).remove(0);
+		for(int i = 0; i < playerList.size(); i++) {
+			ComparingPile.add(playerList.get(i).getPlayerDeck().get(0));
+			playerList.get(i).getPlayerDeck().remove(0);
 		}
 	}
 /*
  *  Show the detail of the card you drew
  */	
 	public void roundDetail() {
-		System.out.println("\n\nGame Start\nRound " + nRound + 
+		if(nRound == 1) {
+			System.out.println("\n\nGame Start");
+		}else {
+			System.out.println("\n");
+		}
+		System.out.println("Round " + nRound + 
 				"\nRound " + nRound + ": Players have drawn their cards");
 
 		System.out.println(ComparingPile.get(0));  //print detail of your first card
-		System.out.println("There are [" + Player.get(0).size() + "] cards in your deck");
-		System.out.println("It is your turn to select a category, the categories are:");
-		System.out.println("   1: Size\n   2: Speed\n   3: Range\n   4: Firepower\n   5: Cargo");
-		System.out.print("Enter the number for your attribute: ");
+		System.out.println("There are [" + playerList.get(0).getPlayerDeck().size() + "] cards in your deck");		
 	}
 	
 	public void takeMax() {
-		Max = Collections.max(CompValue);                         // Max is an Integer Object
-		System.err.println("Max value is: " + Max.toString());    //For test
+		Max = Collections.max(CompValue);                         //Max is an Integer Object
+//		System.err.println("Max value is: " + Max.toString());    //For test
 		for(int i = 0; i < CompValue.size(); i++) {               //CompValue.size() is number of Players
 			if(CompValue.get(i) == Max) {
 				maxList.add(i);
-				System.err.println("Player" + (i+1));             //For test
+//				System.err.println("Player" + (i+1));             //For test
 			}
 		}
 	}
 	
-	public void selectAttribute() {
+	public void humanSelectAttribute() {
+		System.out.println("It is your turn to select a category, the categories are:");
+		System.out.println("   1: Size\n   2: Speed\n   3: Range\n   4: Firepower\n   5: Cargo");
+		System.out.print("Enter the number for your attribute: ");
 		Scanner a = new Scanner(System.in);
 		attribute = a.nextInt();
+	}
+	
+	public void calculate() {
 		
 		if(attribute == 1) {
-			for(int i = 0; i < Player.size(); i++) {
+			for(int i = 0; i < playerList.size(); i++) {
 				CompValue.add(ComparingPile.get(i).getSize());
 			}
 		}else if(attribute == 2) {
-			for(int i = 0; i < Player.size(); i++) {
+			for(int i = 0; i < playerList.size(); i++) {
 				CompValue.add(ComparingPile.get(i).getSpeed());
 			}			
 		}else if(attribute == 3) {
-			for(int i = 0; i < Player.size(); i++) {
+			for(int i = 0; i < playerList.size(); i++) {
 				CompValue.add(ComparingPile.get(i).getRange());
 			}			
 		}else if(attribute == 4) {
-			for(int i = 0; i < Player.size(); i++) {
+			for(int i = 0; i < playerList.size(); i++) {
 				CompValue.add(ComparingPile.get(i).getFirepower());
 			}			
 		}else if(attribute == 5) {
-			for(int i = 0; i < Player.size(); i++) {
+			for(int i = 0; i < playerList.size(); i++) {
 				CompValue.add(ComparingPile.get(i).getCargo());
 			}
 		}
 		takeMax();
+	}
+	
+	public void AISelectAttribute() {
+		AIpicking = new ArrayList<>();
+		int AIplaying = 0;
+		for(int i = 0; i < playerList.size();i++) {
+			if(roundWinnerIndex == playerList.get(i).getPlayerIndex()) {
+				AIplaying = i;
+			}
+		}
+		AIpicking.add(ComparingPile.get(AIplaying).getSize());//
+		AIpicking.add(ComparingPile.get(AIplaying).getSpeed());
+		AIpicking.add(ComparingPile.get(AIplaying).getRange());
+		AIpicking.add(ComparingPile.get(AIplaying).getFirepower());
+		AIpicking.add(ComparingPile.get(AIplaying).getCargo());
+//		AIpicking.add(ComparingPile.get(roundWinnerIndex).getCargo());
+		attribute = AIpicking.indexOf(Collections.max(AIpicking)) + 1;
+		AIpicking = null;
+	}
+	
+	public void selectAttribute() {
+		if(nRound == 1) {
+//			Random r = new Random();
+//			int firstChooser = r.nextInt(nPlayers);
+//			if(firstChooser == 0) {
+//				humanSelectAttribute();
+//			}else {
+//				AISelectAttribute();
+//			}
+			humanSelectAttribute();
+		}else {
+			if(roundWinnerIndex == 0) {
+				humanSelectAttribute();
+			}else {
+				AISelectAttribute();
+			}
+		}
+		calculate();
 	}
 	
 	public void addToCommonPile() {
@@ -170,26 +225,26 @@ public class Game {
 					+ "]:");
 			
 			//print common pile for test
-			System.out.println("<TEST> Common Pile:");
-			for (int i = 0; i < CommonPile.size(); i++) {
-				System.err.println(CommonPile.get(i));
-			}
+//			System.err.println("<TEST> Common Pile:");
+//			for (int i = 0; i < CommonPile.size(); i++) {
+//				System.err.println(CommonPile.get(i));
+//			}
+			printResult();
+			
+		} else {  // not a draw
+			roundWinnerIndex = playerList.get(CompValue.indexOf(Max)).getPlayerIndex();
+//			System.out.println("Round " + nRound + ": Player" + roundWinnerIndex + " won this round");
+			winnerName();
+			System.out.println("Round " + nRound + ": Player " + winner + " won this round");
 			System.out.println("The winning card was [" 
 					+ ComparingPile.get(CompValue.indexOf(Max)).getDescription()
 					+ "]:");
 			printResult();
-			
-		} else {  // not a draw
-			int playerIndex = CompValue.indexOf(Max);
-			System.out.println("Round " + nRound + ": Player" + playerIndex + " won this round");
-			System.out.println("The winning card was [" 
-					+ ComparingPile.get(playerIndex).getDescription()
-					+ "]:");
-			printResult();
 			for(int i = 0; i < CommonPile.size(); i++) {
-				Player.get(playerIndex).add(CommonPile.get(i));
+				playerList.get(CompValue.indexOf(Max)).getPlayerDeck().add(CommonPile.get(i)); //bug here
 			}
 			CommonPile.clear();
+////SQL		playerList.get(roundWinnerIndex) is the winner object, player"roundWinnerIndex" win time + 1;
 		}
 		CompValue.clear();
 		maxList.clear();
@@ -197,32 +252,59 @@ public class Game {
 		nRound++;
 	}
 	public void removePlayer() {
-		for(int i = 0; i < Player.size(); i++) {
-			if(Player.get(i).size() == 0) {
-				Player.remove(i);
+		int i = 0;
+		while(i < playerList.size()) {
+			if(playerList.get(i).getPlayerDeck().size() == 0) {
+//				playerList.get(i).removePlayerDeck();
+				playerList.remove(i);
+				i = 0;
+				continue;
+			} else {
+				i++;
 			}
 		}
 	}
 	
 	public void checkGameEnd() {
-		if(Player.size() == 1) {
+		if(playerList.size() == 1) {
 //			Game End
 			System.out.println("\n\nGame End\n");
 			gameResult();
+			checkLongestGame();
+			nRound = 1;
+			numOfGames++;
+////SQL     numOfGames++		
 			newGame();
 		}else {
 			newRound();
 		}
 	}
 	
+	public void winnerName() {
+		if(roundWinnerIndex == 0) {
+			winner = "You";
+////SQL		Number of Human Wins + 1
+		}else {
+			winner = "AI Player " + roundWinnerIndex;
+////SQL		Number of AI Wins + 1			
+		}
+	}
+	
+	public void checkLongestGame() {
+		if(nRound > longestGame) {
+			longestGame = nRound;
+////SQL		Longest Game			
+		}
+	}
+	
 	public void gameResult() {
-		System.out.println("The overall winner was ");
-		System.out.println("Scores:");
-		System.out.println("   You :");
-		System.out.println("   AI Player 1:");
-		System.out.println("   AI Player 2:");
-		System.out.println("   AI Player 3:");
-		System.out.println("   AI Player 4:");
+		winnerName();
+		System.out.println("The overall winner was " + winner + "\nScores:");
+		for(int i = 0; i < playerList.size(); i++) {
+//			System.out.println("   " + winner + ": " + playerList.get(i).getWinTimes());
+////SQL Win times
+		}
+		System.out.println("\n");
 	}
 		
 	public void printResult() {
@@ -283,17 +365,17 @@ public class Game {
 		+ ComparingPile.get(CompValue.indexOf(Max)).getCargo() + " <--");
 		}
 		ComparingPile.clear();
-		TestPlayerDecks();          //For test
+//		TestPlayerDecks();          //For test
 	}
 	
 	//Tests:
 	
 	public void TestPlayerDecks() { //For test
 		System.err.println("=======================================");
-		for(int i = 0; i < Player.size(); i++) {
-			System.err.println("Player" + (i+1) + " Deck:");
-			for(int j=0; j < Player.get(i).size();j++) {
-				System.err.println(Player.get(i).get(j));//Test if the deck is successfully shuffled
+		for(int i = 0; i < playerList.size(); i++) {
+			System.err.println("Player" + playerList.get(i).getPlayerIndex() + " Deck:");
+			for(int j=0; j < playerList.get(i).getPlayerDeck().size();j++) {
+				System.err.println(playerList.get(i).getPlayerDeck().get(j));//Test if the deck is successfully shuffled
 			}
 			System.err.println("=======================================");
 		}

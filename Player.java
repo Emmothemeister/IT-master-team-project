@@ -7,6 +7,7 @@ public class Player {
 	public Player(int i, ArrayList<Card> pd) {
 		playerIndex = i;
 		playerDeck = pd;
+		
 	}
 	
 	public int getPlayerIndex() {
@@ -16,4 +17,5 @@ public class Player {
 	public ArrayList<Card> getPlayerDeck() {
 		return playerDeck;
 	}
+		
 }
