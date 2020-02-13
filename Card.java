@@ -21,21 +21,21 @@ public class Card {
  *  This method prints the table of all the cards
  */
 	
-	public String toString() {  //Test to print card table
-		String cardDetals = String.format("%-15s %2d   %2d   %2d   %2d   %2d",
-				Description,Size,Speed,Range,Firepower,Cargo);
-		return cardDetals;
-	}
-	
-//	public String toString() {
-//		String cardName = "You drew '" + Description + "':\n";
-//		String cardDetail = "   > Size:       " + Size + "\n" +
-//				"   > Speed:      " + Speed + "\n" +
-//				"   > Range:      " + Range + "\n" +
-//				"   > Firepower:  " + Firepower + "\n" +
-//				"   > Cargo:      " + Cargo;
-//		return cardName + cardDetail;
+//	public String toString() {  //Test to print card table
+//		String cardDetals = String.format("%-15s %2d   %2d   %2d   %2d   %2d",
+//				Description,Size,Speed,Range,Firepower,Cargo);
+//		return cardDetals;
 //	}
+	
+	public String toString() {
+		String cardName = "You drew '" + Description + "':\n";
+		String cardDetail = "   > Size:       " + Size + "\n" +
+				"   > Speed:      " + Speed + "\n" +
+				"   > Range:      " + Range + "\n" +
+				"   > Firepower:  " + Firepower + "\n" +
+				"   > Cargo:      " + Cargo;
+		return cardName + cardDetail;
+	}
 	
 	//Getters
 	
