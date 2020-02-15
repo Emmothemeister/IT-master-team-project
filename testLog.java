@@ -9,9 +9,9 @@ public class testLog {
 	static LogManager lm = LogManager.getLogManager();
 	static Logger logger = Logger.getLogger("statistic.testLog");
 	static String dashLine = "------------------------------------------------------------------------------------------";
-	static String data = "¿¨×éÐÅÏ¢";
-	@Test
-	public void test() throws Exception {
+	static String data = "";
+	
+	public void test(String s) throws Exception {
 		lm.readConfiguration(is);
 		logger.info(data);
 		logger.info(dashLine);
