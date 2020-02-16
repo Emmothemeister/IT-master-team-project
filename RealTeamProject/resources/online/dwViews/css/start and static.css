@@ -1,0 +1,10 @@
+*{margin:0;padding:0}
+ ul{list-style: none;}
+ a{text-decoration: none;color: rgb(89, 93, 91);}
+ /* h1 h2 h3{font-size: 18px} */
+/* 初始化 */
+.left{float: left;}
+.clear{content:""; display:block;clear:both;}
+body{background-image: url(../background.png);background-repeat: repeat-x;}
+#main{width: 1110px; margin:auto;}
+#main .title{height: 55px;line-height: 55px;font-size: 18px;padding-left: 15px;background-color:rgb(62, 62, 58);color: white;margin-bottom: 15px;}
