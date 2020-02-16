@@ -1,11 +1,23 @@
-import java.sql.*;
+import java.sql.*; //Import JBDC class library
 
 public class JDBCUtils {
-	static final String JDBC_DRIVER = "org.postgresql.Driver";
-	static final String DB_URL = "jdbc:postgresql://yacata.dcs.gla.ac.uk:5432/m_19_2503308x?allowMultiQueries=true";
-	static final String USER = "m_19_2503308X";
-	static final String PASS = "2503308X";
+//	static final String JDBC_DRIVER = "org.postgresql.Driver";
+//	static final String DB_URL = "jdbc:postgresql://yacata.dcs.gla.ac.uk:5432/m_19_2503308x?allowMultiQueries=true";
+//	static final String USER = "m_19_2503308X";
+//	static final String PASS = "2503308X";
 	
+//	//local host
+//	static final String JDBC_DRIVER = "org.postgresql.Driver";
+//	static final String DB_URL = "jdbc:postgresql://localhost:5432/postgres?allowMultiQueries=true";
+//	static final String USER = "postgres";
+//	static final String PASS = "********";//Enter your password here
+	
+	//AWS
+	static final String JDBC_DRIVER = "org.postgresql.Driver";
+	static final String DB_URL = "jdbc:postgresql://52.24.215.108/404NotFound?allowMultiQueries=true";
+	static final String USER = "404NotFound";
+	static final String PASS = "404NotFound";//Enter your password here
+		
 	// Connect to database
 	public static Connection getConnection() {
 		try {
@@ -22,15 +34,56 @@ public class JDBCUtils {
 		return null;
 	}
 	
+	public static void createTables() { //create tables
+		Connection conn = JDBCUtils.getConnection();
+		Statement stmt = null;
+		
+		try {
+			stmt = conn.createStatement();
+			String SQL = "CREATE TABLE PLAYER("
+					+ "PID INT NOT NULL,"
+					+ "PNAME VARCHAR(3) NOT NULL,"
+					+ "REPW INT DEFAULT 0,"
+					+ "CONSTRAINT PPK PRIMARY KEY (PID)"
+					+ ");"
+					+ "CREATE TABLE ONEGAME("
+					+ "RID INT NOT NULL,"
+					+ "WID INT,"
+					+ "CONSTRAINT OGPK PRIMARY KEY (RID),"
+					+ "CONSTRAINT OGFK FOREIGN KEY (WID) REFERENCES PLAYER(PID)"
+					+ "ON UPDATE CASCADE ON DELETE CASCADE"
+					+ ");"
+					+ "CREATE TABLE ALLGAMES("
+					+ "GID INT NOT NULL,"
+					+ "WID INT,"
+					+ "FROUND INT NOT NULL,"
+					+ "NDRAW INT,"
+					+ "CONSTRAINT AGPK PRIMARY KEY (GID),"
+					+ "CONSTRAINT AGFK FOREIGN KEY (WID) REFERENCES PLAYER(PID)"
+					+ "ON UPDATE CASCADE ON DELETE CASCADE"
+					+ ");";
+			stmt.executeUpdate(SQL);
+		}catch (SQLException se) {
+			se.printStackTrace();
+			return;
+		}
+		try {
+			stmt.close();
+			conn.close();
+		}catch (SQLException se) {
+			se.printStackTrace();
+		}
+	}
+	
 	// clear all rounds' information once a game has completed
-	public static void resetRounds() {
+	public static void resetONEGAME() {
 		Connection conn = JDBCUtils.getConnection();
 		Statement stmt = null;
 		
 		try {
 			conn.setAutoCommit(false);
-			System.out.println("clear all data from toptrumps");
-			String sql = "truncate table toptrumps";
+			System.out.println("clear all data from ONEGAME");
+			String sql = "truncate table ONEGAME";
 			stmt = conn.createStatement();
 			int result = stmt.executeUpdate(sql);
 			System.out.println(result);
@@ -44,46 +97,50 @@ public class JDBCUtils {
 		}
 	}
 	
-	// Record information once a round has completed
-	public static void updateRounds() {
+	public static void insertPLAYER() {//5PLAYERS
 		Connection conn = JDBCUtils.getConnection();
-		PreparedStatement pstmt = null;
+//		PreparedStatement pstmt = null;
+		Statement stmt = null;
 		
 		try {
 			conn.setAutoCommit(false);
-			System.out.println("Storing data into toptrumps");
-			String sql = "insert into toptrumps(winner,draw) values(?,?)";
-			pstmt = conn.prepareStatement(sql);
-			if(true) {
-				pstmt.setString(1, "AI1");
-				pstmt.setString(2, "false");
-			}
-			int result = pstmt.executeUpdate();
+			System.out.println("Storing data into PLAYER");
+//			String sql = "insert into PLAYER(PID,PNAME) values(?,?)";
+//			pstmt = conn.prepareStatement(sql);
+			stmt = conn.createStatement();
+				String sql = "insert into PLAYER VALUES(0,'YOU');"
+						+ "insert into PLAYER VALUES(1,'AI1');"
+						+ "insert into PLAYER VALUES(2,'AI2');"
+						+ "insert into PLAYER VALUES(3,'AI3');"
+						+ "insert into PLAYER VALUES(4,'AI4');";
+//				pstmt.setInt(1, a);
+//				pstmt.setString(2, b);
+//			int result = pstmt.executeUpdate();
+			int result = stmt.executeUpdate(sql);
 			System.out.println(result);
 			conn.commit( );
 		}catch(SQLException se) {
 			System.out.println("Could not store data");
 			se.printStackTrace();
 		} finally {
-			JDBCUtils.closePstmt(pstmt);
+			JDBCUtils.closeStmt(stmt);
 			JDBCUtils.closeConn(conn);
 		}
 	}
-	
 	// Record information once a game has completed
-	public static void updateGames() {
+	//modified
+	public static void updateONEGAME(int a, int b) { //int b when null
 		Connection conn = JDBCUtils.getConnection();
 		PreparedStatement pstmt = null;
 		
 		try {
 			conn.setAutoCommit(false);
-			System.out.println("Storing data into game record");
-			String sql = "insert into gamerecord(wog,nod, nor) values(?,?,?)";
+			System.out.println("Storing data into ONEGAME");
+			String sql = "insert into ONEGAME(RID,WID) values(?,?)";
 			pstmt = conn.prepareStatement(sql);
 			if(true) {
-				pstmt.setString(1, "HM2");
-				pstmt.setInt(2, 3);
-				pstmt.setInt(3, 10);
+				pstmt.setInt(1, a);//modified
+				pstmt.setInt(2, b);//modified
 			}
 			int result = pstmt.executeUpdate();
 			System.out.println(result);
@@ -97,8 +154,83 @@ public class JDBCUtils {
 		}
 	}
 	
-	// Access to database and collect past game records
-	public static void getRecord() throws SQLException {
+	public static void updateONEGAMEdraw(int a) { //int b when null
+		Connection conn = JDBCUtils.getConnection();
+		PreparedStatement pstmt = null;
+		
+		try {
+			conn.setAutoCommit(false);
+			System.out.println("Storing data into ONEGAME");
+			String sql = "insert into ONEGAME(RID,WID) values(?,null)";
+			pstmt = conn.prepareStatement(sql);
+			if(true) {
+				pstmt.setInt(1, a);//modified
+			}
+			int result = pstmt.executeUpdate();
+			System.out.println(result);
+			conn.commit( );
+		}catch(SQLException se) {
+			System.out.println("Could not store data");
+			se.printStackTrace();
+		} finally {
+			JDBCUtils.closePstmt(pstmt);
+			JDBCUtils.closeConn(conn);
+		}
+	}
+	
+	public static void updateALLGAMES(int a, int b, int c, int d) {
+		Connection conn = JDBCUtils.getConnection();
+		PreparedStatement pstmt = null;
+		
+		try {
+			conn.setAutoCommit(false);
+			System.out.println("Storing data into ALLGAMES");
+			String sql = "insert into ALLGAMES(GID,WID,FROUND,NDRAW) values(?,?,?,?)";
+			pstmt = conn.prepareStatement(sql);
+			if(true) {
+				pstmt.setInt(1, a);//modified
+				pstmt.setInt(2, b);//modified
+				pstmt.setInt(3, c);//modified
+				pstmt.setInt(4, d);//modified
+			}
+			int result = pstmt.executeUpdate();
+			System.out.println(result);
+			conn.commit( );
+		}catch(SQLException se) {
+			System.out.println("Could not store data");
+			se.printStackTrace();
+		} finally {
+			JDBCUtils.closePstmt(pstmt);
+			JDBCUtils.closeConn(conn);
+		}
+	}
+	
+	public static void getONEGAMERecord(){
+		Connection conn = JDBCUtils.getConnection();
+		Statement stmt1 = null;
+		ResultSet gameResult = null;
+		try {
+			conn.setAutoCommit(false);
+			String s1 = "select P.PID, P.PNAME,count(*) as Rounds_Each_Player_Win "
+					+ "from PLAYER AS P,ONEGAME AS O "
+					+ "WHERE P.PID = O.WID "
+					+ "GROUP BY P.PID;";
+			stmt1 = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			gameResult = stmt1.executeQuery(s1);
+			JDBCUtils.printGameResult(gameResult);
+		} catch(SQLException se) {
+			System.out.println("Could not get result from game record");
+			se.printStackTrace();
+		} finally {
+			JDBCUtils.closeRs(gameResult);
+			JDBCUtils.closeStmt(stmt1);
+			JDBCUtils.closeConn(conn);
+			System.out.println("players who were not shown on this table got 0 score");
+		}
+	}
+	
+	//Access to database and collect past game records
+	public static void getStatistics(){
 		Connection conn = JDBCUtils.getConnection();
 		Statement stmt1 = null;
 		Statement stmt2 = null;
@@ -112,12 +244,12 @@ public class JDBCUtils {
 		ResultSet rs5 = null;
 		try {
 			conn.setAutoCommit(false);
-			System.out.println("Trying to get past game records");
-			String s1 = "select count(*) as Number_of_Games_Completed from gamerecord";
-			String s2 =	"select count(*)as Number_of_Game_Won_by_AI from gamerecord";
-			String s3 = "select count(*)as Number_of_Game_Won_by_Human from gamerecord";
-			String s4 = "select avg(nod) as Average_Number_of_Draws from gamerecord";
-			String s5 = "select avg(nor) as Max_Number_of_Rounds from gamerecord";
+			System.out.println("Game Statistics:");
+			String s1 = "select count(*) as Number_of_Games from ALLGAMES";
+			String s2 = "select count(*)as Number_of_Game_Won_by_Human from ALLGAMES WHERE WID = 0";
+			String s3 =	"select count(*)as Number_of_Game_Won_by_AI from ALLGAMES WHERE WID = 1 OR WID = 2 OR WID = 3 OR WID = 4";		
+			String s4 = "select avg(NDRAW) as Average_Number_of_Draws from ALLGAMES";
+			String s5 = "select MAX(FROUND) as Longest_Game from ALLGAMES";
 			stmt1 = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 			stmt2 = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 			stmt3 = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
@@ -135,9 +267,8 @@ public class JDBCUtils {
 			JDBCUtils.printRs5(rs5);
 			conn.commit( );
 		} catch(SQLException se) {
-			System.out.println("Could not get result from game record");
+			System.out.println("Could not get game statistics");
 			se.printStackTrace();
-			conn.rollback( );
 		} finally {
 			JDBCUtils.closeRs(rs5);
 			JDBCUtils.closeRs(rs4);
@@ -183,36 +314,45 @@ public class JDBCUtils {
 			se.printStackTrace();
 		}
 	}
+	//One Game Result
+	public static void printGameResult(ResultSet rs) throws SQLException {
+		rs.beforeFirst();
+		while(rs.next()) {
+			int ngc = rs.getInt("Rounds_Each_Player_Win");
+			String pname = rs.getString("PNAME");
+			System.out.println(pname + " : " + ngc);
+		}
+	}
 	
 	public static void printRs1(ResultSet rs) throws SQLException {
 		rs.beforeFirst();
 		while(rs.next()) {
-			int ngc = rs.getInt("Number_of_Games_Completed");
-			System.out.println("Number_of_Games_Completed = " + ngc);
+			int NOG = rs.getInt("Number_of_Games");
+			System.out.println("Number of Games: " + NOG);
 		}
-	}
+    }
 	
 	public static void printRs2(ResultSet rs) throws SQLException {
 			rs.beforeFirst();
 			while(rs.next()) {
-				int ngwa = rs.getInt("Number_of_Game_Won_by_AI");
-				System.out.println("Number_of_Game_Won_by_AI = " + ngwa);
+				int NOGWBH = rs.getInt("Number_of_Game_Won_by_Human");
+				System.out.println("Number of Human Wins: " + NOGWBH);
 			}
 	}
 	
 	public static void printRs3(ResultSet rs) throws SQLException {
 		rs.beforeFirst();
 		while(rs.next()) {
-			int ngwh = rs.getInt("Number_of_Game_Won_by_Human");
-			System.out.println("Number_of_Game_Won_by_Human = " + ngwh);
+			int NOGWBA = rs.getInt("Number_of_Game_Won_by_AI");
+			System.out.println("Number of AI Wins: " + NOGWBA);
 		}
 	}
 	
 	public static void printRs4(ResultSet rs) throws SQLException {
 		rs.beforeFirst();
 		while(rs.next()) {
-			int and = rs.getInt("Average_Number_of_Draws");
-			System.out.println("Average_Number_of_Draws = " + and);
+			int ANOD = rs.getInt("Average_Number_of_Draws");
+			System.out.println("Average number of Draws: " + ANOD);
 			
 		}
 	}
@@ -220,8 +360,8 @@ public class JDBCUtils {
 	public static void printRs5(ResultSet rs) throws SQLException {
 		rs.beforeFirst();
 		while(rs.next()) {
-			int mnr = rs.getInt("Max_Number_of_Rounds");
-			System.out.println("Max_Number_of_Rounds = " + mnr);
+			int LG = rs.getInt("Longest_Game");
+			System.out.println("Longest Game: " + LG);
 		}
 	}
 }
