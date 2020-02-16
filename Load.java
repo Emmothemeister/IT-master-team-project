@@ -1,7 +1,7 @@
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
 /*
  *  This class is only used for reading file and creating Card objects,
@@ -60,13 +60,13 @@ public class Load {
  *      A toString Method in Card class need to be uncommented
  */
 		
-		if(Deck.getDeck().size() > 0) {
-			for(int i = 0; i < Deck.getDeck().size();i++) {
-				System.err.println(Deck.getDeck().get(i));
-			}
-		} else {
-			System.err.println("No cards detected");
-		}
+//		if(Deck.getDeck().size() > 0) {
+//			for(int i = 0; i < Deck.getDeck().size();i++) {
+//				System.err.println(Deck.getDeck().get(i));
+//			}
+//		} else {
+//			System.err.println("No cards detected");
+//		}
 		
 		
 	}
