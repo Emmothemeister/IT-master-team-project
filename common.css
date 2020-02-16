@@ -16,11 +16,8 @@ body{background-image: url(../background.png);background-repeat: repeat-x;}
 #main .Button{width: 215px;margin-right: 60px;border-radius: 3px;margin-left: 13px;}
 #main .Info{background-color: rgb(41, 171, 225);color: white;border-radius: 3px;font-size: 18px; height: 68px;line-height: 30px;text-align: left;padding-left: 20px;padding-right: 10px;padding-top: 5px;}
 
-#main .card1{border-radius: 3px;width: 215px;height: 460px;;border:1px red solid;margin-right: 56px;margin-bottom: 40px;}
-#main .card2{border-radius: 3px;width: 215px;height: 460px;;border:1px red solid;margin-right: 56px;margin-bottom: 40px;}
-#main .card3{border-radius: 3px;width: 215px;height: 460px;;border:1px red solid;margin-right: 56px;margin-bottom: 40px;}
-#main .card4{border-radius: 3px;width: 215px;height: 460px;;border:1px red solid;margin-right: 56px;margin-bottom: 40px;}
-#main .card5{border-radius: 3px;width: 215px;height: 460px;;border:1px red solid;margin-right: 56px;margin-bottom: 40px;}
+#main ul div[class*=card]{border-radius: 3px;width: 215px;height: 460px;;border:1px red solid;margin-right: 56px;margin-bottom: 40px;}
+
 #main .name{border-radius: 3px;height: 45px;background-color: rgb(244, 124, 60);padding-left: 20px;padding-top: 15px;}
 #main .player{border-radius: 3px;height: 45px;background-color: rgb(147, 196, 75);padding-left: 20px;padding-top: 15px;}
 #main .type{height: 35px;padding-left: 20px;padding-top: 15px;text-align: left;}
