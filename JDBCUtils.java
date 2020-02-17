@@ -4,7 +4,7 @@ public class JDBCUtils {
 		static final String JDBC_DRIVER = "org.postgresql.Driver";
 		static final String DB_URL = "jdbc:postgresql://52.24.215.108/404NotFound?allowMultiQueries=true";
 		static final String USER = "404NotFound";
-		static final String PASS = "404NotFound";
+		static final String PASS = "404NotFound";//Enter your password here
 			
 		// Connect to database
 		public static Connection getConnection() {
@@ -352,14 +352,14 @@ public class JDBCUtils {
 			Connection conn = getConnection();
 			Statement stmt = null;
 			ResultSet rs = null;
-			//String ng = "";
+			String ng = "";
 			try {
 				conn.setAutoCommit(false);
 				System.out.println("Trying to get past game records");
 				String s = "select count(*) as Number_of_Games from allgames";
 				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 				rs = stmt.executeQuery(s);
-				printRs1(rs);
+				ng = printRs1(rs);
 				conn.commit( );
 			} catch(SQLException se) {
 				System.out.println("Could not get result from game record");
@@ -370,20 +370,21 @@ public class JDBCUtils {
 				closeStmt(stmt);
 				closeConn(conn);
 			}
-			return null;
+			return ng;
 		}
 		
 		public static String getNgwh() throws SQLException {
 			Connection conn = getConnection();
 			Statement stmt = null;
 			ResultSet rs= null;
+			String ngwh = "";
 			try {
 				conn.setAutoCommit(false);
 				System.out.println("Trying to get past game records");
 				String s = "select count(*)as Number_of_Game_Won_by_Human from allgames where wid = 0";
 				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 				rs = stmt.executeQuery(s);
-				printRs2(rs);
+				ngwh = printRs2(rs);
 				conn.commit( );
 			} catch(SQLException se) {
 				System.out.println("Could not get result from game record");
@@ -394,20 +395,21 @@ public class JDBCUtils {
 				closeStmt(stmt);
 				closeConn(conn);
 			}
-			return null;
+			return ngwh;
 		}
 		
 		public static String getNgwa() throws SQLException {
 			Connection conn = getConnection();
 			Statement stmt = null;
 			ResultSet rs= null;
+			String ngwa = "";
 			try {
 				conn.setAutoCommit(false);
 				System.out.println("Trying to get past game records");
 				String s = "select count(*)as Number_of_Game_Won_by_AI from allgames where not wid = 0";
 				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 				rs = stmt.executeQuery(s);
-				printRs3(rs);
+				ngwa = printRs3(rs);
 				conn.commit( );
 			} catch(SQLException se) {
 				System.out.println("Could not get result from game record");
@@ -418,20 +420,21 @@ public class JDBCUtils {
 				closeStmt(stmt);
 				closeConn(conn);
 			}
-			return null;
+			return ngwa;
 		}
 		
 		public static String getAnd() throws SQLException {
 			Connection conn = getConnection();
 			Statement stmt = null;
 			ResultSet rs= null;
+			String and = "";
 			try {
 				conn.setAutoCommit(false);
 				System.out.println("Trying to get past game records");
 				String s = "select avg(ndraw) as Average_Number_of_Draws from allgames";
 				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 				rs = stmt.executeQuery(s);
-				printRs4(rs);
+				and = printRs4(rs);
 				conn.commit( );
 			} catch(SQLException se) {
 				System.out.println("Could not get result from game record");
@@ -442,20 +445,21 @@ public class JDBCUtils {
 				closeStmt(stmt);
 				closeConn(conn);
 			}
-			return null;
+			return and;
 		}
 		
 		public static String getMnr() throws SQLException {
 			Connection conn = getConnection();
 			Statement stmt = null;
 			ResultSet rs = null;
+			String mnr = "";
 			try {
 				conn.setAutoCommit(false);
 				System.out.println("Trying to get past game records");
 				String s = "select max(nround) as Longest_Game from allgames";
 				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 				rs = stmt.executeQuery(s);
-				printRs5(rs);
+				mnr = printRs5(rs);
 				conn.commit( );
 			} catch(SQLException se) {
 				System.out.println("Could not get result from game record");
@@ -466,7 +470,7 @@ public class JDBCUtils {
 				closeStmt(stmt);
 				closeConn(conn);
 			}
-			return null;
+			return mnr;
 		}
 	}
 
