@@ -330,7 +330,7 @@ public class JDBCUtils {
 			int NOG = rs.getInt("Number_of_Games");
 			String nog = Integer.toString(NOG);
 			System.out.println("Number of Games: " + NOG);
-			rturn nog;
+			return nog;
 		}
 		return null;
     	}
@@ -487,7 +487,7 @@ public class JDBCUtils {
 		try {
 			conn.setAutoCommit(false);
 			System.out.println("Trying to get past game records");
-			String s = "select MAX(FROUND) as Longest_Game from ALLGAME";
+			String s = "select MAX(NROUND) as Longest_Game from ALLGAMES";
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 			rs = stmt.executeQuery(s);
 			mnr = printRs5(rs);
