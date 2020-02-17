@@ -247,7 +247,7 @@ public class JDBCUtils {
 			System.out.println("Game Statistics:");
 			String s1 = "select count(*) as Number_of_Games from ALLGAMES";
 			String s2 = "select count(*)as Number_of_Game_Won_by_Human from ALLGAMES WHERE WID = 0";
-			String s3 =	"select count(*)as Number_of_Game_Won_by_AI from ALLGAMES WHERE WID = 1 OR WID = 2 OR WID = 3 OR WID = 4";		
+			String s3 = "select count(*)as Number_of_Game_Won_by_AI from ALLGAMES WHERE not WID = 0";		
 			String s4 = "select avg(NDRAW) as Average_Number_of_Draws from ALLGAMES";
 			String s5 = "select MAX(FROUND) as Longest_Game from ALLGAMES";
 			stmt1 = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
@@ -363,5 +363,130 @@ public class JDBCUtils {
 			int LG = rs.getInt("Longest_Game");
 			System.out.println("Longest Game: " + LG);
 		}
+	}
+	
+		public static String getNg() throws SQLException {
+		Connection conn = JDBCUtils.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String ng = "";
+		try {
+			conn.setAutoCommit(false);
+			System.out.println("Trying to get past game records");
+			String s = "select count(*) as Number_of_Games from ALLGAMES";
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			rs = stmt.executeQuery(s);
+			ng = printRs1(rs);
+			conn.commit( );
+		} catch(SQLException se) {
+			System.out.println("Could not get result from game record");
+			se.printStackTrace();
+			conn.rollback( );
+		} finally {
+			JDBCUtils.closeRs(rs);
+			JDBCUtils.closeStmt(stmt);
+			JDBCUtils.closeConn(conn);
+		}
+		return ng;
+	}
+	
+	public static String getNgwh() throws SQLException {
+		Connection conn = JDBCUtils.getConnection();
+		Statement stmt = null;
+		ResultSet rs= null;
+		String ngwh = "";
+		try {
+			conn.setAutoCommit(false);
+			System.out.println("Trying to get past game records");
+			String s = "sselect count(*)as Number_of_Game_Won_by_Human from ALLGAMES WHERE WID = 0";
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			rs = stmt.executeQuery(s);
+			ngwh = printRs2(rs);
+			conn.commit( );
+		} catch(SQLException se) {
+			System.out.println("Could not get result from game record");
+			se.printStackTrace();
+			conn.rollback( );
+		} finally {
+			JDBCUtils.closeRs(rs);
+			JDBCUtils.closeStmt(stmt);
+			JDBCUtils.closeConn(conn);
+		}
+		return ngwh;
+	}
+	
+	public static String getNgwa() throws SQLException {
+		Connection conn = JDBCUtils.getConnection();
+		Statement stmt = null;
+		ResultSet rs= null;
+		String ngwa = "";
+		try {
+			conn.setAutoCommit(false);
+			System.out.println("Trying to get past game records");
+			String s = "select count(*)as Number_of_Game_Won_by_AI from ALLGAMES WHERE not WID = 0";
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			rs = stmt.executeQuery(s);
+			ngwa = printRs3(rs);
+			conn.commit( );
+		} catch(SQLException se) {
+			System.out.println("Could not get result from game record");
+			se.printStackTrace();
+			conn.rollback( );
+		} finally {
+			JDBCUtils.closeRs(rs);
+			JDBCUtils.closeStmt(stmt);
+			JDBCUtils.closeConn(conn);
+		}
+		return ngwa;
+	}
+	
+	public static String getAnd() throws SQLException {
+		Connection conn = JDBCUtils.getConnection();
+		Statement stmt = null;
+		ResultSet rs= null;
+		String and = "";
+		try {
+			conn.setAutoCommit(false);
+			System.out.println("Trying to get past game records");
+			String s = "select avg(NDRAW) as Average_Number_of_Draws from ALLGAMES";
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			rs = stmt.executeQuery(s);
+			and = printRs4(rs);
+			conn.commit( );
+		} catch(SQLException se) {
+			System.out.println("Could not get result from game record");
+			se.printStackTrace();
+			conn.rollback( );
+		} finally {
+			JDBCUtils.closeRs(rs);
+			JDBCUtils.closeStmt(stmt);
+			JDBCUtils.closeConn(conn);
+		}
+		return and;
+	}
+	
+	public static String getMnr() throws SQLException {
+		Connection conn = JDBCUtils.getConnection();
+		Statement stmt = null;
+		ResultSet rs= null;
+		String mnr = "";
+		try {
+			conn.setAutoCommit(false);
+			System.out.println("Trying to get past game records");
+			String s = "select MAX(FROUND) as Longest_Game from ALLGAME";
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			rs = stmt.executeQuery(s);
+			mnr = printRs5(rs);
+			conn.commit( );
+		} catch(SQLException se) {
+			System.out.println("Could not get result from game record");
+			se.printStackTrace();
+			conn.rollback( );
+		} finally {
+			JDBCUtils.closeRs(rs);
+			JDBCUtils.closeStmt(stmt);
+			JDBCUtils.closeConn(conn);
+		}
+		return mnr;
 	}
 }
