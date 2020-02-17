@@ -43,7 +43,6 @@ public class JDBCUtils {
 			String SQL = "CREATE TABLE PLAYER("
 					+ "PID INT NOT NULL,"
 					+ "PNAME VARCHAR(3) NOT NULL,"
-					+ "REPW INT DEFAULT 0,"
 					+ "CONSTRAINT PPK PRIMARY KEY (PID)"
 					+ ");"
 					+ "CREATE TABLE ONEGAME("
@@ -54,9 +53,9 @@ public class JDBCUtils {
 					+ "ON UPDATE CASCADE ON DELETE CASCADE"
 					+ ");"
 					+ "CREATE TABLE ALLGAMES("
-					+ "GID INT NOT NULL,"
+					+ "GID SERIAL NOT NULL,"
 					+ "WID INT,"
-					+ "FROUND INT NOT NULL,"
+					+ "NROUND INT NOT NULL,"
 					+ "NDRAW INT,"
 					+ "CONSTRAINT AGPK PRIMARY KEY (GID),"
 					+ "CONSTRAINT AGFK FOREIGN KEY (WID) REFERENCES PLAYER(PID)"
@@ -178,20 +177,19 @@ public class JDBCUtils {
 		}
 	}
 	
-	public static void updateALLGAMES(int a, int b, int c, int d) {
+	public static void updateALLGAMES(int a, int b, int c) {
 		Connection conn = JDBCUtils.getConnection();
 		PreparedStatement pstmt = null;
 		
 		try {
 			conn.setAutoCommit(false);
 			System.out.println("Storing data into ALLGAMES");
-			String sql = "insert into ALLGAMES(GID,WID,FROUND,NDRAW) values(?,?,?,?)";
+			String sql = "insert into ALLGAMES(WID,NROUND,NDRAW) values(?,?,?)";
 			pstmt = conn.prepareStatement(sql);
 			if(true) {
 				pstmt.setInt(1, a);//modified
 				pstmt.setInt(2, b);//modified
 				pstmt.setInt(3, c);//modified
-				pstmt.setInt(4, d);//modified
 			}
 			int result = pstmt.executeUpdate();
 			System.out.println(result);
@@ -249,7 +247,7 @@ public class JDBCUtils {
 			String s2 = "select count(*)as Number_of_Game_Won_by_Human from ALLGAMES WHERE WID = 0";
 			String s3 =	"select count(*)as Number_of_Game_Won_by_AI from ALLGAMES WHERE WID = 1 OR WID = 2 OR WID = 3 OR WID = 4";		
 			String s4 = "select avg(NDRAW) as Average_Number_of_Draws from ALLGAMES";
-			String s5 = "select MAX(FROUND) as Longest_Game from ALLGAMES";
+			String s5 = "select MAX(NROUND) as Longest_Game from ALLGAMES";
 			stmt1 = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 			stmt2 = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 			stmt3 = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
