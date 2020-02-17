@@ -4,7 +4,7 @@ public class JDBCUtils {
 		static final String JDBC_DRIVER = "org.postgresql.Driver";
 		static final String DB_URL = "jdbc:postgresql://52.24.215.108/404NotFound?allowMultiQueries=true";
 		static final String USER = "404NotFound";
-		static final String PASS = "404NotFound";//Enter your password here
+		static final String PASS = "404NotFound";
 			
 		// Connect to database
 		public static Connection getConnection() {
