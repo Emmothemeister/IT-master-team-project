@@ -357,13 +357,15 @@ public class JDBCUtils {
 		return null;
 	}
 	
-	public static void printRs4(ResultSet rs) throws SQLException {
+	public static String printRs4(ResultSet rs) throws SQLException {
 		rs.beforeFirst();
 		while(rs.next()) {
 			int ANOD = rs.getInt("Average_Number_of_Draws");
+			String anod = Integer.toString(ANOD);
 			System.out.println("Average number of Draws: " + ANOD);
-			
+			return anod;
 		}
+		return null;
 	}
 	
 	public static String printRs5(ResultSet rs) throws SQLException {
