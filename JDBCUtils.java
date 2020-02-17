@@ -324,28 +324,37 @@ public class JDBCUtils {
 		}
 	}
 	
-	public static void printRs1(ResultSet rs) throws SQLException {
+	public static String printRs1(ResultSet rs) throws SQLException {
 		rs.beforeFirst();
 		while(rs.next()) {
 			int NOG = rs.getInt("Number_of_Games");
+			String nog = Integer.toString(NOG);
 			System.out.println("Number of Games: " + NOG);
+			rturn nog;
 		}
-    }
+		return null;
+    	}
 	
-	public static void printRs2(ResultSet rs) throws SQLException {
-			rs.beforeFirst();
-			while(rs.next()) {
-				int NOGWBH = rs.getInt("Number_of_Game_Won_by_Human");
-				System.out.println("Number of Human Wins: " + NOGWBH);
-			}
-	}
+	public static String printRs2(ResultSet rs) throws SQLException {
+		rs.beforeFirst();
+		while(rs.next()) {
+			int NOGWBH = rs.getInt("Number_of_Game_Won_by_Human");
+			String nogwbh = Integer.toString(NOGWBH);
+			System.out.println("Number of Human Wins: " + NOGWBH);
+			return nogwbh;
+		}
+		return null;
+  	}
 	
-	public static void printRs3(ResultSet rs) throws SQLException {
+	public static String printRs3(ResultSet rs) throws SQLException {
 		rs.beforeFirst();
 		while(rs.next()) {
 			int NOGWBA = rs.getInt("Number_of_Game_Won_by_AI");
+			String nogwba = Integer.toString(NOGWBA);
 			System.out.println("Number of AI Wins: " + NOGWBA);
+			return nogwba;
 		}
+		return null;
 	}
 	
 	public static void printRs4(ResultSet rs) throws SQLException {
@@ -357,15 +366,18 @@ public class JDBCUtils {
 		}
 	}
 	
-	public static void printRs5(ResultSet rs) throws SQLException {
+	public static String printRs5(ResultSet rs) throws SQLException {
 		rs.beforeFirst();
 		while(rs.next()) {
 			int LG = rs.getInt("Longest_Game");
+			String lg = Integer.toString(LG);
 			System.out.println("Longest Game: " + LG);
+			return lg;
 		}
+		return NULL;
 	}
 	
-		public static String getNg() throws SQLException {
+	public static String getNg() throws SQLException {
 		Connection conn = JDBCUtils.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
