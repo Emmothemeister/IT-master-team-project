@@ -432,7 +432,8 @@ public class Game {
 		String ENTER = "Please press [ENTER] to continue";
 		printer = ENTER;
 		System.out.println(printer);
-//		new Scanner(System.in).nextLine();
+		new Scanner(System.in).nextLine();
+		
 		if(playerList.size() == 1) {
             //This game is over
 			String gameEnd = "\n\nGame End\n";
@@ -559,7 +560,7 @@ public class Game {
 		ComparingPile.clear();
 	}
 	
-	//Tests:
+	//Test methods:
 	
 	public String playerName(int i) {
 		if(i == 0) {
@@ -619,75 +620,4 @@ public class Game {
 		}
 	}
 
-	
-// Methods for online mode	
-	//displayPlayer
-	public boolean displayPlayer(int playerIndex) {
-		if(playerList.get(playerIndex) != null) {
-			return true;
-		}else {
-			return false;
-		}
-	}
-	//mark
-	public boolean markAttribute(int attributeIndex) {
-		if(attribute == attributeIndex) {
-			return true;
-		}else {
-			return false;
-		}
-	}
-	//pick attributes
-	public void pickSize() {
-		attribute = 1;
-		calculate();
-	}
-	public void pickSpeed() {
-		attribute = 2;
-		calculate();
-	}
-	public void pickRange() {
-		attribute = 3;
-		calculate();
-	}
-	public void pickFirepower() {
-		attribute = 4;
-		calculate();
-	}
-	public void pickCargo() {
-		attribute = 5;
-		calculate();
-	}
-	
-	//Choose number of players, 5 buttons
-	public void twoPlayers() {
-		for(int i = 0; i < 2; i++) {
-			playerList.add(new Player(i, new ArrayList<Card>()));
-		}
-	}
-	public void threePlayers() {
-		for(int i = 0; i < 3; i++) {
-			playerList.add(new Player(i, new ArrayList<Card>()));
-		}
-	}
-	public void fourPlayers() {
-		for(int i = 0; i < 4; i++) {
-			playerList.add(new Player(i, new ArrayList<Card>()));
-		}
-	}
-	public void fivePlayers() {
-		for(int i = 0; i < 5; i++) {
-			playerList.add(new Player(i, new ArrayList<Card>()));
-		}
-	}
-	public void Start() {
-		for(int i = 0; i < 3; i++) {
-			playerList.add(new Player(i, new ArrayList<Card>()));
-		}
-	}
-	
-	public int getRoundWinnerIndex() {
-		return roundWinnerIndex;
-	}
-	
 }
