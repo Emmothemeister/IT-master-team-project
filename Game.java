@@ -30,6 +30,7 @@ public class Game {
 	private ArrayList<Integer> AIpicking = new ArrayList<>();
 	
 	//Others
+	private String info;
 	private String printer;
 	private String winner;
 	private int YourDeckSize;
@@ -63,16 +64,16 @@ public class Game {
 		String startingMessage = "Do you want to see past results or play a game?\n"
 				+ "   1: Print Game Statistics\n   2: Play game\n"
 				+ "Enter the number for your selection: ";
-		printer = startingMessage;
-		System.out.print(printer);
+		info = startingMessage;
+		System.out.print(info);
 		
 		Scanner s = new Scanner(System.in);
 		selection = s.nextInt();
 		//Only number 1 or 2 is valid
 		if(selection < 1 || selection > 2) {
 			String wrongSelection = "\n< Please input a correct number >";
-			printer = wrongSelection;
-			System.out.println(printer);
+			info = wrongSelection;
+			System.out.println(info);
 			start();              //Restart
 		}
 		select();                 //Proceed to next step
@@ -108,15 +109,15 @@ public class Game {
 	
 	public void createPlayer() {
 		String chooseNumOfPlayers = "Please choose number of players:[ 2 - 5 ]";
-		printer = chooseNumOfPlayers;
-		System.out.print(printer);
+		info = chooseNumOfPlayers;
+		System.out.print(info);
 		Scanner s2 = new Scanner(System.in);
 		nPlayers = s2.nextInt();
 		//Number of players should be between 2 to 5
 		if(nPlayers < 2 || nPlayers > 5) {
 			String wrongNumOfPlayers = "\n< Please input a correct number of players>";
-			printer = wrongNumOfPlayers;
-			System.out.println(printer);
+			info = wrongNumOfPlayers;
+			System.out.println(info);
 			createPlayer();
 		}else {                   //Correct input, then create Player Objects
 			for(int i = 0; i < nPlayers; i++) {
@@ -170,15 +171,15 @@ public class Game {
 	public void roundDetail() {
 		if(nRound == 1) {
 			String gameStart = "\n\nGame Start"; //First Round show 'Game Start'
-			printer = gameStart;
-			System.out.println(printer);
+			info = gameStart;
+			System.out.println(info);
 		}else {
 			System.out.println();                //Other Rounds add an extra blank line
 		}
-		String roundTitle = "Round " + nRound + 
+		String round = "Round " + nRound + 
 				"\nRound " + nRound + ": Players have drawn their cards";		
-		printer = roundTitle;
-		System.out.println(printer);
+		info = round;
+		System.out.println(info);
 /*
  * Since your first card has already drawn from your deck and added into the ComparingPile,
  * the detail of your first card can be accessed by reading the first card in ComparingPile
@@ -186,8 +187,8 @@ public class Game {
 		checkIfHumanIsAlive();
 		
 		String yourDeckSize = "There are [" + YourDeckSize + "] cards in your deck";
-		printer = yourDeckSize;
-		System.out.println(printer);
+		info = yourDeckSize;
+		System.out.println(info);
 
 	}
 
@@ -219,15 +220,15 @@ public class Game {
 		String showCategories = "It is your turn to select a category, the categories are:"
 				+ "   1: Size\n   2: Speed\n   3: Range\n   4: Firepower\n   5: Cargo\n"
 				+ "Enter the number for your attribute: ";
-		printer = showCategories;
-		System.out.print(printer);
+		info = showCategories;
+		System.out.print(info);
 		Scanner a = new Scanner(System.in);
 		attribute = a.nextInt();
 		
 		if(attribute < 1 || attribute > 5) {
 			String wrongAttribute = "\n< Please input a correct index of attribute>";
-			printer = wrongAttribute;
-			System.out.println(printer);
+			info = wrongAttribute;
+			System.out.println(info);
 			humanSelectAttribute();
 		}
 	}
@@ -321,8 +322,8 @@ public class Game {
 					+ "] cards\nThe winning card was [" 
 					+ ComparingPile.get(CompValue.indexOf(Max)).getDescription() 
 					+ "]:";
-			printer = roundIsDraw;
-			System.out.println(printer);
+			info = roundIsDraw;
+			System.out.println(info);
 			
 //			//print common pile for test
 //			System.err.println("<TEST> Common Pile now has:");
@@ -341,8 +342,8 @@ public class Game {
 					+ "The winning card was ["
 					+ ComparingPile.get(CompValue.indexOf(Max)).getDescription()
 					+ "]:";
-			printer = winnerDetails;
-			System.out.println(printer);
+			info = winnerDetails;
+			System.out.println(info);
 			printResult();
 			
 			//Winner gain all the cards from common pile
@@ -377,14 +378,14 @@ public class Game {
 	
 	public void checkGameEnd() {
 		String ENTER = "Please press [ENTER] to continue";
-		printer = ENTER;
-		System.out.println(printer);
+		info = ENTER;
+		System.out.println(info);
 //		new Scanner(System.in).nextLine();
 		if(playerList.size() == 1) {
             //This game is over
 			String gameEnd = "\n\nGame End\n";
-			printer = gameEnd;
-			System.out.println(printer);
+			info = gameEnd;
+			System.out.println(info);
 			//Update data to database
 			JDBCUtils.updateALLGAMES(roundWinnerIndex, nRound, nDraws);
 			gameResult();
@@ -411,8 +412,8 @@ public class Game {
 	public void gameResult() {
 		winnerName();
 		String gameResult = "The overall winner was " + winner + "\nScores:";
-		printer = gameResult;
-		System.out.println(printer);
+		info = gameResult;
+		System.out.println(info);
 		//Access to database
 		JDBCUtils.getONEGAMERecord();
 		System.out.println("\n");
@@ -437,64 +438,64 @@ public class Game {
 		String markCargo     = cargo     + " <--";
 		
 		if(attribute == 1) {
-			printer = markSize;       //  <--
-			System.out.println(printer);
-			printer = speed;
-			System.out.println(printer);
-			printer = range;
-			System.out.println(printer);
-			printer = firepower;
-			System.out.println(printer);
-			printer = cargo;
-			System.out.println(printer);
+			info = markSize;       //  <--
+			System.out.println(info);
+			info = speed;
+			System.out.println(info);
+			info = range;
+			System.out.println(info);
+			info = firepower;
+			System.out.println(info);
+			info = cargo;
+			System.out.println(info);
 			
 		} else if (attribute == 2) {
-			printer = size;
-			System.out.println(printer);
-			printer = markSpeed;      //  <--
-			System.out.println(printer);
-			printer = range;
-			System.out.println(printer);
-			printer = firepower;
-			System.out.println(printer);
-			printer = cargo;
-			System.out.println(printer);
+			info = size;
+			System.out.println(info);
+			info = markSpeed;      //  <--
+			System.out.println(info);
+			info = range;
+			System.out.println(info);
+			info = firepower;
+			System.out.println(info);
+			info = cargo;
+			System.out.println(info);
 			
 		} else if (attribute == 3) {
-			printer = size;
-			System.out.println(printer);
-			printer = speed;
-			System.out.println(printer);
-			printer = markRange;      //  <--
-			System.out.println(printer);
-			printer = firepower;
-			System.out.println(printer);
-			printer = cargo;
-			System.out.println(printer);
+			info = size;
+			System.out.println(info);
+			info = speed;
+			System.out.println(info);
+			info = markRange;      //  <--
+			System.out.println(info);
+			info = firepower;
+			System.out.println(info);
+			info = cargo;
+			System.out.println(info);
 			
 		} else if (attribute == 4) {
-			printer = size;
-			System.out.println(printer);
-			printer = speed;
-			System.out.println(printer);
-			printer = range;
-			System.out.println(printer);
-			printer = markFirepower;  //  <--
-			System.out.println(printer);
-			printer = cargo;
-			System.out.println(printer);
+			info = size;
+			System.out.println(info);
+			info = speed;
+			System.out.println(info);
+			info = range;
+			System.out.println(info);
+			info = markFirepower;  //  <--
+			System.out.println(info);
+			info = cargo;
+			System.out.println(info);
 			
 		} else if (attribute == 5) {
-			printer = size;
-			System.out.println(printer);
-			printer = speed;
-			System.out.println(printer);
-			printer = range;
-			System.out.println(printer);
-			printer = firepower;
-			System.out.println(printer);
-			printer = markCargo;      //  <--
-			System.out.println(printer);
+			info = size;
+			System.out.println(info);
+			info = speed;
+			System.out.println(info);
+			info = range;
+			System.out.println(info);
+			info = firepower;
+			System.out.println(info);
+			info = markCargo;      //  <--
+			System.out.println(info);
 		}
 		ComparingPile.clear();
 //		TestPlayerDecks();          //For test
